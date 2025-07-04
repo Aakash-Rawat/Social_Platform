@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice.js";
+import { useState } from "react";
+import CreatePost from "./CreatePost";
 
 
 const LeftSidebar = () => {
@@ -23,6 +25,7 @@ const LeftSidebar = () => {
 
    const dispatch = useDispatch();
 
+   const [open,setOpen] = useState(false);
 
 
     const logoutHandler = async () =>{
@@ -42,10 +45,16 @@ const LeftSidebar = () => {
     }
 
 
+
 const sidebarHandler = (textType) =>{
          if(textType == 'logout')
-         {
+         {    
             logoutHandler();
+         }
+
+         else if(textType == 'Create')
+         {
+            setOpen(true);
          }
 }
 
@@ -85,6 +94,8 @@ const sidebarItems = [
           }
         </div>
       </div>
+
+      <CreatePost open = {open} setOpen={setOpen}/>
     </div>
   );
 };
