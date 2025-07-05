@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 
 const CommentDialog = ({ open, setOpen }) => {
   const [text,setText] = useState("");
+  
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {

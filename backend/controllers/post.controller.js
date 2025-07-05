@@ -271,7 +271,7 @@ export const deletePost = async(req,res) =>{
 
      await Comment.deleteMany({post: postId})
 
-       return res.status({
+       return res.status(200).json({
         message: 'Post deleted',
         success: true
        })
