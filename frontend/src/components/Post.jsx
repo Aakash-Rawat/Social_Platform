@@ -11,6 +11,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
 import { useDispatch } from "react-redux";
+import { Badge } from "./ui/badge";
+
 
 const Post = ({ post }) => {
   const [text, setText] = useState("");
@@ -112,14 +114,158 @@ const [comments, setComments] = useState(post.comments || []);
 
 
   return (
-    <div className="my-8 w-full max-w-sm mx-auto">
+    <div className="my-8 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-2 sm:px-4">
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-2">
+      <Avatar>
+        <AvatarImage src={post.author?.profilePicture} alt="post_Image" />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+        <h1 className="text-sm sm:text-base">{post.author?.username}</h1>
+        {user?._id === post.author._id && (
+          <Badge variant="secondary" className="text-[10px] sm:text-xs">
+            Author
+          </Badge>
+        )}
+      </div>
+    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <MoreHorizontal className="cursor-pointer" />
+      </DialogTrigger>
+      <DialogContent className="flex flex-col items-center text-sm text-center">
+        <Button
+          variant="ghost"
+          className="cursor-pointer w-fit text-[#ED4956] font-bold"
+        >
+          Unfollow
+        </Button>
+        <Button
+          variant="ghost"
+          className="cursor-pointer w-fit text-[#ED4956] font-bold"
+        >
+          Add to favorites
+        </Button>
+        {user && user?._id === post?.author._id && (
+          <Button onClick={deletePostHandler} variant="ghost" className="cursor-pointer w-fit">
+            Delete
+          </Button>
+        )}
+      </DialogContent>
+    </Dialog>
+  </div>
+
+  <img
+    className="rounded-sm my-2 w-full aspect-square object-cover"
+    src={post.image}
+    alt="post_img"
+  />
+
+  <div className="flex items-center justify-between mt-2">
+    <div className="flex items-center gap-3">
+      {like ? (
+        <FaHeart
+          onClick={likeOrDislikeHandler}
+          size={"22px"}
+          className="cursor-pointer text-red-600"
+        />
+      ) : (
+        <FaRegHeart
+          onClick={likeOrDislikeHandler}
+          size={"22px"}
+          className="cursor-pointer hover:text-gray-600"
+        />
+      )}
+      <MessageCircle
+        onClick={() => {
+          dispatch(setSelectedPost(post));
+          setOpen(true);
+        }}
+        className="cursor-pointer hover:text-gray-600"
+      />
+      <Send className="cursor-pointer hover:text-gray-600" />
+    </div>
+    <Bookmark className="cursor-pointer hover:text-gray-600" />
+  </div>
+
+  <span className="font-medium block mb-2 text-sm sm:text-base">{postLike}</span>
+  <p className="text-sm sm:text-base">
+    <span className="font-medium mr-2">{post.author?.username}</span>
+    {post.caption}
+  </p>
+
+  {comments.length > 0 && (
+    <span
+      onClick={() => {
+        dispatch(setSelectedPost(post));
+        setOpen(true);
+      }}
+      className="cursor-pointer text-sm text-gray-400"
+    >
+      View all {comments.length} comments
+    </span>
+  )}
+
+  <CommentDialog open={open} setOpen={setOpen} />
+
+  <div className="flex items-center justify-between mt-2">
+    <input
+      type="text"
+      placeholder="Add a comment..."
+      value={text}
+      onChange={changeEventHandler}
+      className="outline-none text-sm w-full mr-2"
+    />
+    {text && (
+      <span
+        onClick={commentHandler}
+        className="text-[#3BADF8] cursor-pointer text-sm font-medium"
+      >
+        Post
+      </span>
+    )}
+  </div>
+</div>
+
+  );
+};
+
+export default Post;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Without responsive design code for backup
+/*  <div className="my-8 w-full max-w-sm mx-auto">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage src={post.author?.profilePicture} alt="post_Image" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <h1>{post.author?.username}</h1>
+          <div className="flex item-center gap-3">
+             <h1>{post.author?.username}</h1>
+             {user?._id === post.author._id && <Badge variant='secondary'>Author</Badge>}
+          </div>
+          
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -207,7 +353,4 @@ const [comments, setComments] = useState(post.comments || []);
         {text && <span onClick={commentHandler} className="text-[#3BADF8] cursor-pointer">Post</span>}
       </div>
     </div>
-  );
-};
-
-export default Post;
+    */
