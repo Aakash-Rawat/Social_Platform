@@ -177,23 +177,26 @@ export const addComment = async (req,res) =>{
             })
           }
         
-          const comment = await Comment.create({
-            text,
-            author: commentedBy,
-            post: postId
-          }).populate({
-            path: 'author',
-            select: 'username, profilePicture'
-          });
+         const comment = await Comment.create({
+  text,
+  author: commentedBy,
+  post: postId
+});
 
-          post.comments.push(comment._id);
-          post.save();
+// Populate the author field
+const populatedComment = await Comment.findById(comment._id).populate({
+  path: 'author',
+  select: 'username profilePicture'
+});
 
-          return res.status(201).json({
-            message: 'Comment added',
-            success: true
-          })
+post.comments.push(comment._id);
+await post.save();
 
+return res.status(201).json({
+  message: 'Comment added',
+  success: true,
+  comment: populatedComment
+});
 
     } catch (error) {
          console.log(error);

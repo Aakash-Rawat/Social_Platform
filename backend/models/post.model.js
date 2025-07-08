@@ -17,16 +17,16 @@ const postSchema = new mongoose.Schema({
         required: true
     },
 
-    likes: [ {
-        type: mongoose.Schema.Types.ObjectId,
+    likes:  {
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
-        default:[]
-    }
-],
-    comments: {
+        default :[]
+    },
+
+    comments: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }
+        ref: 'Comment'
+    }]
 })
 
 export const Post = mongoose.model('Post',postSchema)

@@ -9,7 +9,7 @@ import CommentDialog from "./CommentDialog";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
-import { setPosts } from "@/redux/postSlice";
+import { setPosts, setSelectedPost } from "@/redux/postSlice";
 import { useDispatch } from "react-redux";
 
 const Post = ({ post }) => {
@@ -20,6 +20,7 @@ const Post = ({ post }) => {
   const dispatch = useDispatch();
   const [like, setLike] = useState(Array.isArray(post.likes)&&(user?._id)? post.likes.includes(user._id) : false);
 const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.length : 0);
+const [comments, setComments] = useState(post.comments || []);
 
 
   const changeEventHandler = (e) => {
@@ -62,6 +63,14 @@ const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.
              const updatedLikes = like?postLike-1: postLike+1;
               setPostlike(updatedLikes);
               setLike(!like);
+              // Update the post in the Redux store
+              const updatedPostData = posts.map((p) => 
+                p._id === post._id ? { 
+                  ...p,
+                   likes: like? p.likes.filter(id=>id!==user._id) :[...p.likes,user._id  ]
+                   } : p
+              );
+              dispatch(setPosts(updatedPostData));
              toast.success(res.data.message);
           }
 
@@ -70,6 +79,33 @@ const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.
     }
   }
 
+  const commentHandler = async ()=>{
+    try {
+      const res = await axios.post(`http://localhost:8000/api/v1/post/${post._id}/comment`,{text},{
+          headers:{
+            'Content-Type':'application/json'
+          },
+          withCredentials:true
+      });
+
+      if(res.data.success)
+      {
+          const updatedCommentData = [...comments, res.data.comment];
+          setComments(updatedCommentData);
+
+          const updatePostData = posts.map((p) =>
+            p._id === post._id ? { ...p, comments: updatedCommentData } : p
+          );
+               
+          dispatch(setPosts(updatePostData));
+        toast.success(res.data.message);
+        setText(""); // Clear the input field after posting the comment
+      }
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
 
 
 
@@ -121,13 +157,19 @@ const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <FaRegHeart
+          {
+            like?<FaHeart onClick={likeOrDislikeHandler} size={'22px'} className="cursor-pointer text-red-600" /> :  <FaRegHeart
             onClick={likeOrDislikeHandler}
             size={"22px"}
             className="cursor-pointer hover:text-gray-600"
           />
+          }
+         
           <MessageCircle
-            onClick={() => setOpen(true)}
+            onClick={() => {
+                  dispatch(setSelectedPost(post));
+              setOpen(true)
+            } }
             className="cursor-pointer hover:text-gray-600"
           />
           <Send className="cursor-pointer hover:text-gray-600" />
@@ -139,12 +181,20 @@ const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.
         <span className="font-medium mr-2">{post.author?.username}</span>
         {post.caption}
       </p>
-      <span
-        onClick={() => setOpen(true)}
+      {
+         comments.length > 0 && (
+                <span
+        onClick={() => {
+                  dispatch(setSelectedPost(post));
+              setOpen(true)
+            } }
         className="cursor-pointer text-sm text-gray-400"
       >
-        View all 10 comments
+        View all {comments.length} comments
       </span>
+         )
+      }
+     
       <CommentDialog open={open} setOpen={setOpen} />
       <div className="flex items-center justify-between">
         <input
@@ -154,7 +204,7 @@ const [postLike, setPostlike] = useState(Array.isArray(post.likes) ? post.likes.
           onChange={changeEventHandler}
           className="outline-none text-sm w-full"
         />
-        {text && <span className="text-[#3BADF8]">Post</span>}
+        {text && <span onClick={commentHandler} className="text-[#3BADF8] cursor-pointer">Post</span>}
       </div>
     </div>
   );

@@ -1,12 +1,31 @@
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Dialog, DialogContent } from "./ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { useSelector } from "react-redux";
+import Comment from "./Comment";
+import axios from "axios";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setPosts } from "@/redux/postSlice";
 
 const CommentDialog = ({ open, setOpen }) => {
   const [text,setText] = useState("");
+   const {selectedPost} = useSelector((store) => store.post);
+  const { posts } = useSelector((store) => store.post);
+  const [comment, setComments] = useState([]);
+ 
+
+  useEffect(() => {
+    if (selectedPost) {
+      setComments(selectedPost.comments);
+    }
+  }, [selectedPost]);
+
+
   
+  const dispatch = useDispatch();
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     if (inputText.trim()) {
@@ -16,9 +35,34 @@ const CommentDialog = ({ open, setOpen }) => {
     }
   }
 
-const sendMessageHandler = async () => {
-     alert(text);
-}
+ const sendMessageHandler = async ()=>{
+    try {
+      const res = await axios.post(`http://localhost:8000/api/v1/post/${selectedPost._id}/comment`,{text},{
+          headers:{
+            'Content-Type':'application/json'
+          },
+          withCredentials:true
+      });
+
+      if(res.data.success)
+      {
+          const updatedCommentData = [...comment, res.data.comment];
+          setComments(updatedCommentData);
+
+          const updatePostData = posts.map((p) =>
+            p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
+          );
+               
+          dispatch(setPosts(updatePostData));
+        toast.success(res.data.message);
+        setText(""); // Clear the input field after posting the comment
+      }
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
+
 
 
   return (
@@ -27,8 +71,7 @@ const sendMessageHandler = async () => {
         <div className="flex flex-1">
            <div className="w-1/2">
           <img
-            src="https://images.unsplash.com/photo-1482015527294-7c8203fc9828?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="post_img"
+            src={selectedPost?.image}
             className="w-full h-full object-cover rounded-l-lg"
           />
         </div>
@@ -38,12 +81,12 @@ const sendMessageHandler = async () => {
             <div className="flex gap-3 items-center">
                <Link>
                <Avatar>
-              <AvatarImage src="" />
+              <AvatarImage src={selectedPost?.author?.profilePicture} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             </Link>
             <div>
-              <Link className="font-semibold text-xs">username</Link>
+              <Link className="font-semibold text-xs">{selectedPost?.author?.username}</Link>
               {/* <span className="text-gray-600 text-sm">Bio here</span> */}
             </div>
            
@@ -52,11 +95,14 @@ const sendMessageHandler = async () => {
           </div>
           <hr />
           <div className="flex-1 overflow-y-auto max-h-96 p-4">
-           comments here
+            {
+              comment.map((comment)=> <Comment key ={comment._id} comment={comment} />)
+            }
+          
           </div>
           <div className="p-4">
               <div className="flex items-center gap-2">
-                <input value={text} onChange={changeEventHandler} type="text" placeholder="Add a comment..." className="w-full outline-none border border-gray-300 p-2 rounded" />
+                <input value={text} onChange={changeEventHandler} type="text" placeholder="Add a comment..." className="w-full text-sm outline-none border border-gray-300 p-2 rounded" />
                 <Button disabled={!text.trim()} onClick={sendMessageHandler} className={'text-blue-600'} variant={'outline'}>
                   Post
                 </Button>
