@@ -22,6 +22,7 @@ export default MainLayout
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import LeftSidebar from "./LeftSidebar";
+import RightSidebar from "./RightSidebar";
 import BottomNavbar from "./BottomNavbar";
 import CreatePost from "./CreatePost";
 
@@ -30,19 +31,27 @@ const MainLayout = () => {
 
   return (
     <>
-      {/* Sidebar for desktop */}
-      <LeftSidebar />
+      <div className="flex">
+        {/* Left Sidebar - only visible on sm and above */}
+        <LeftSidebar />
 
-      {/* Bottom navbar for mobile */}
+        {/* Main Content */}
+        <main className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-16 sm:mb-0">
+          <Outlet />
+        </main>
+
+        {/* Right Sidebar - only visible on lg and above */}
+        <div className="hidden lg:block w-64 pr-4 pt-4">
+          <RightSidebar />
+        </div>
+      </div>
+
+      {/* Bottom Navbar for mobile */}
       <BottomNavbar onCreate={() => setOpen(true)} />
       <CreatePost open={open} setOpen={setOpen} />
-
-      {/* Main content with responsive margins */}
-      <main className="sm:ml-20 md:ml-44 lg:ml-56 mb-14 sm:mb-0 p-4">
-        <Outlet />
-      </main>
     </>
   );
 };
 
 export default MainLayout;
+

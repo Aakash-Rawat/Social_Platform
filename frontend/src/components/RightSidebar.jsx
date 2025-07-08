@@ -1,18 +1,11 @@
 import React from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-// import SuggestedUsers from './SuggestedUsers';
 
 const RightSidebar = () => {
-  // const {user} = useSelector(store=>store.auth)
   return (
-
-    <div >
-      RightSidebar
+    <div className="bg-white p-4 rounded-md">
+      {/* Empty Right Sidebar - Add your widgets or content here later */}
     </div>
-    
-  )
-}
+  );
+};
 
-export default RightSidebar
+export default RightSidebar;
