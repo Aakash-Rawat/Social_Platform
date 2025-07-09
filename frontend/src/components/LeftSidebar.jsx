@@ -72,7 +72,10 @@ const LeftSidebar = () => {
 
   return (
     <div className="hidden sm:flex flex-col fixed top-0 left-0 h-screen w-20 md:w-44 lg:w-56 border-r border-gray-300 px-2 sm:px-4 py-6 bg-white z-10">
-      <h1 className="mb-8 text-center text-xl font-bold">READOMO</h1>
+     <h1 className="mb-8 text-center text-xl sm:text-2xl md:text-3xl font-bold break-words max-w-full">
+  READOMO
+</h1>
+
       <div className="space-y-2">
         {sidebarItems.map((item, index) => (
           <div
