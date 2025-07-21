@@ -3,6 +3,7 @@ import cloudinary from "../utils/cloudinary.js";
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
+import { getRecieverSocketID } from "../socket/socket.js";
 
 export const addNewPost = async(req,res) =>{
     try {
@@ -116,7 +117,20 @@ export const likePost = async (req,res) =>{
     
 
     // implement socket io for real time notification
-
+         
+       const user = await User.findById(likedBy).select('username profilePicture');
+       const postOwnerId = post.author.toString();
+       if(postOwnerId!=likedBy){
+            const notification = {
+                type: 'like',
+                userId: likedBy,
+                userDetails: user,
+                postId,
+                message: 'Your post was liked'
+            }
+            const postOwnerSocketID = getRecieverSocketID(postOwnerId)
+            io.to(postOwnerSocketID).emit('notification',notification);
+       }
 
     return res.status(200).json({
         message: 'Post liked',
@@ -147,7 +161,19 @@ export const dislikePost = async (req,res) =>{
     
 
     // implement socket io for real time notification
-
+       const user = await User.findById(likedBy).select('username profilePicture');
+       const postOwnerId = post.author.toString();
+       if(postOwnerId!=likedBy){
+            const notification = {
+                type: 'dislike',
+                userId: likedBy,
+                userDetails: user,
+                postId,
+                message: 'Your post was liked'
+            }
+            const postOwnerSocketID = getRecieverSocketID(postOwnerId)
+            io.to(postOwnerSocketID).emit('notification',notification);
+       }
 
     return res.status(200).json({
         message: 'Post disliked',

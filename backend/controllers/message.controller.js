@@ -1,7 +1,7 @@
 // For chatting
 import {Conversation} from "../models/conversation.model.js"
 import { Message } from "../models/message.model.js";
-
+import { getRecieverSocketID } from "../socket/socket.js";
 
 
 export const sendMessages = async(req,res) =>{
@@ -38,6 +38,15 @@ export const sendMessages = async(req,res) =>{
           await Promise.all([conversation.save(), newMessage.save()]);
 
           //implement io socket for real time data transfer
+
+          const recieverSocketId = getRecieverSocketID(recieverId);
+         
+           if(recieverSocketId){
+                io.to(recieverSocketId).emit('newMessage',newMessage)
+           }
+       
+
+
 
           return res.status(201).json({
             newMessage,

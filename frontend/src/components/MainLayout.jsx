@@ -31,17 +31,19 @@ const MainLayout = () => {
 
   return (
     <>
-      <div className="flex">
-        {/* Left Sidebar - only visible on sm and above */}
-        <LeftSidebar />
+      <div className="flex w-full">
+        {/* Left Sidebar - visible on sm and above */}
+        <div className="hidden sm:block w-60 h-screen sticky top-0 ">
+          <LeftSidebar />
+        </div>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-16 sm:mb-0">
+        <main className="flex-1  w-full px-4 sm:px-6 lg:px-8 mt-4 mb-16 sm:mb-0 overflow-y-auto">
           <Outlet />
         </main>
 
-        {/* Right Sidebar - only visible on lg and above */}
-        <div className="hidden lg:block w-64 pr-4 pt-4">
+        {/* Right Sidebar - visible on lg and above */}
+        <div className="hidden lg:block w-64 h-screen sticky top-0 pr-4 pt-4 overflow-y-auto">
           <RightSidebar />
         </div>
       </div>
@@ -54,4 +56,3 @@ const MainLayout = () => {
 };
 
 export default MainLayout;
-
