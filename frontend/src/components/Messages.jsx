@@ -2,12 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import React from 'react'
 import { Button } from './ui/button'
 import { Link } from 'react-router-dom'
+import useGetAllMessage from '@/hooks/useGetAllMessage'
+import { useSelector } from 'react-redux'
 
 const Messages = ({selectedUser}) => {
+  useGetAllMessage();
+    const {messages} = useSelector(store => store.chat);
  
     
- 
-
 
 
 
@@ -29,7 +31,7 @@ const Messages = ({selectedUser}) => {
       </div>
       <div className='flex flex-col gap-3 mt-5'>
        {
-        [1,2,3,4].map((msg)=>{
+        messages && messages.map((msg)=>{
             return (
                  <div className='flex'>
                         <div>

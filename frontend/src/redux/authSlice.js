@@ -7,7 +7,7 @@ const authSlice = createSlice({
           user:null,
           suggestedUsers:[],
         userProfile:null,
-        selectedUser:null
+        selectedUser: null
 
     },
     reducers:{

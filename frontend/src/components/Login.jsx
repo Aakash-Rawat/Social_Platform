@@ -102,7 +102,7 @@
 // export default Login
 
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
@@ -110,8 +110,9 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setAuthUser } from '@/redux/authSlice.js'
+
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -126,6 +127,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {user} = useSelector(store => store.auth);
 
   const signupHandler = async (e) => {
     e.preventDefault();
@@ -153,6 +155,13 @@ const Login = () => {
       setLoading(false);
     }
   }
+
+  useEffect(()=>{
+    if(user)
+    {
+      navigate('/');
+    }
+  },[])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">

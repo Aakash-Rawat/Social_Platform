@@ -338,7 +338,7 @@ export const bookmarkPost = async(req,res) => {
        else{
               // bookmarking
 
-              await user.updateOne({$addToSet:{bookmarks: post,_id}});
+              await user.updateOne({$addToSet:{bookmarks: post._id}});
           await user.save();
           return res.status(200).json({type: 'saved', message: 'Post bookmarked',success: true})
        }

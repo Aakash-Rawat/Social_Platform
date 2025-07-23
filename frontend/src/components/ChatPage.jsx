@@ -16,10 +16,10 @@ const ChatPage = () => {
   const dispatch = useDispatch();
   const {messages} = useSelector(store=>store.chat)
 
-  const sendMessageHandler = async (recieverId) =>{
+  const sendMessageHandler = async (receiverId) =>{
     try {
       
-  const res = await axios.post(`http://localhost:8000/app/v1/message/send/${recieverId}`,{
+  const res = await axios.post(`http://localhost:8000/api/v1/message/send/${receiverId}`,{
     textMessage},
     {
        headers: {
@@ -45,7 +45,7 @@ const ChatPage = () => {
     return () =>{
       dispatch(setSelectedUser(null));
     }
-  })
+  },[])
 
 
 
@@ -108,7 +108,7 @@ const ChatPage = () => {
               className='flex-1 mr-2 focus-visible:ring-transparent'
               placeholder='Messages...'
             />
-            <Button onClick={()=>sendMessageHandler(selectedUser?.recieverId)}  >Send</Button>
+            <Button onClick={()=>sendMessageHandler(selectedUser?._id)}  >Send</Button>
           </div>
         </section>
       ) : (

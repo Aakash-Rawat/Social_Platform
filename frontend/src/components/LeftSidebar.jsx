@@ -33,7 +33,8 @@ const LeftSidebar = () => {
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      // toast.error(error.response.data.message);
+      console.log(error);
     }
   };
 
@@ -56,10 +57,10 @@ const LeftSidebar = () => {
 
   const sidebarItems = [
     { icon: <Home />, text: "Home" },
-    { icon: <Search />, text: "Search" },
-    { icon: <TrendingUp />, text: "Explore" },
-    { icon: <MessageCircle />, text: "Messages" },
-    { icon: <Heart />, text: "Notifications" },
+    // { icon: <Search />, text: "Search" },
+    // { icon: <TrendingUp />, text: "Explore" },
+    // { icon: <MessageCircle />, text: "Messages" },
+    // { icon: <Heart />, text: "Notifications" },
     { icon: <PlusSquare />, text: "Create" },
     {
       icon: (

@@ -11,24 +11,25 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setOnlineUsers } from './redux/chatSlice'
 import { setSocket } from './redux/socketSlice'
+import ProtectedRoutes from './components/protectedRoutes'
 
 
 const browserRouter = createBrowserRouter([
   {
     path:"/",
-    element:<MainLayout/>,
+    element: <ProtectedRoutes><MainLayout/></ProtectedRoutes>,
     children:[
       {
         path:"/",
-        element:<Home/>
+        element:<ProtectedRoutes><Home/></ProtectedRoutes>
       },
       {
         path:"/profile/:id",
-        element:<Profile/>
+        element:<ProtectedRoutes><Profile/></ProtectedRoutes>
       },
       {
         path:"/account/edit",
-        element:<EditProfile/>
+        element:<ProtectedRoutes><EditProfile/></ProtectedRoutes>
       },
       {
         path:"/chat",
